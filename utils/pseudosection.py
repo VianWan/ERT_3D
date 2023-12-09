@@ -65,7 +65,7 @@ def pole_pole(
     electrode_z = np.array([j for i in transmit_pre_electrode for j in range(0, i)])
     # refine the plotting data
     if interp:
-        [electrode_x,electrode_z,c_values]=interp_electrode(electrode_x,electrode_z,c_values,0.3 * (loc_a[0] + loc_a[1]))
+        [electrode_x,electrode_z,c_values]=interp_electrode(electrode_x,electrode_z,c_values,0.05 * (loc_m[0] + loc_m[1])) # change the step lenght here
     # The data range becomes compact
     if log_switch:
         c_values = np.log10(c_values)
@@ -92,7 +92,7 @@ def pole_dipole(
     electrode_z = np.array([j for i in serinedez for j in range(0, i)])
 
     if interp:
-        [electrode_x, electrode_z, c_values] = interp_electrode(electrode_x, electrode_z, c_values, 0.3 * (loc_a[0] + loc_a[1]))
+        [electrode_x, electrode_z, c_values] = interp_electrode(electrode_x, electrode_z, c_values, 0.1 * (loc_a[0] + loc_a[1]))
 
     if log_switch:
         c_values = np.log10(c_values)
@@ -168,7 +168,7 @@ def plot_pseudosection(
  ---------------------------------------------------------------------------------------------------
   
     Notice:
-       if the electrode configuration like pole-pole, u just set that electrode parameter equals None
+       if the electrode configuration ,ignore some electrode, u just set that Corresponding electrode parameter equals None(default)
 
        may be function in whole page written so tight, u can adjust some parameters or rectify function
     """
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
     try:
     
-        observed_data='D:/matlabSpace/Dongjiangxb/xbb/xb6b-xb8b.xlsx'  
+        observed_data='example/T231122006.xlsx'  
         DATA = read_excel(observed_data,sheet_name=1,engine='openpyxl')
         
     except IOError:
@@ -219,13 +219,7 @@ if __name__ == '__main__':
                 loc_m=DATA.iloc[:,2]
                 loc_n=DATA.iloc[:,3]
                 obs_voltage=np.where(DATA.loc[:,'R0']>0,DATA.loc[:,'R0'],1e-4)
-
-            else:
-                loc_a=DATA.iloc[:,0]
-                loc_b=DATA.iloc[:,1]
-                loc_m=DATA.iloc[:,2]
-                loc_n=DATA.iloc[:,3]
-                obs_voltage=np.where(DATA.iloc[:,-1].values>0,DATA.iloc[:,-1].values,1e-4)
+                
         except ValueError:
             pass
         else:
