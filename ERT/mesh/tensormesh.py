@@ -3,9 +3,11 @@ import string
 from typing import Tuple
 from matplotlib.axes import Axes
 
+from ..base.basemesh import BaseMesh
 
 
-class Tensormesh():
+class TensorMesh(BaseMesh):
+
     """ This class aims for generate 3D mesh
 
     Methods:
@@ -35,6 +37,14 @@ class Tensormesh():
        3 6     9  12
  
     """
+    # save memory and accelerate access instace's attribute speed
+    __slot__ = ('nodex','nodey','nodez',
+                'cell_centers_x','cell_centers_y','cell_centers_z',
+
+    ) 
+
+
+    
     def __init__(self,h:'list') -> None:
         # input consist of 3 part, 
         # like X direction inculding [(padding factor,padding_num),(core_grid width, core_grid_num),(padding factor,padding_num)]
@@ -167,7 +177,7 @@ class Tensormesh():
   
         
     @staticmethod
-    def _polt_image(nodex,nodey,nodez: 'Tensormesh.attritube') -> np.ndarray:
+    def _polt_image(nodex,nodey,nodez: 'TensorMesh.attritube') -> np.ndarray:
         """ generate the plotting grid """
         line_nodex = np.r_[nodex[0],nodex[-1],np.nan].astype(np.float32)
         line_nodey = np.r_[nodey[0],nodey[-1],np.nan].astype(np.float32)
@@ -292,7 +302,7 @@ if __name__ == '__main__':
     hy=[(-1.5,5),(2,2),(1.5,2)]
     hz=[(-1.5,20),(2,2)]
     h=[hx,hy,hz]
-    c = Tensormesh(h)
+    c = TensorMesh(h)
     # Tensormesh.plot_image(mesh = c)
     print(c.edges)
     print(c)
