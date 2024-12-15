@@ -2,13 +2,14 @@ import numpy as np
 import pandas as pd 
 from itertools import chain
 from typing import List
+from ..utils.survey import SurveyGenerate
 
 class FromPole2Other(object):
     """ Most studies show pole-pole array have the lowest resolving arrays,other four dipole
     array such as dipole, Wenner and Schlumberger etc performe well in the aspect of S/N and model
     resolution. Given the time consumtation and field survey condition, pole may be the ideal electrode 
-    arrangement, and can be combinated into 4-pole array.
-        This class aims to convert the pole configuration,acquired in site, into 4-pole array.
+    arrangement, for it can be coverted laterly into 4-pole array  in labtory.
+        This class aims to convert the pole useful data acquired in site into 4-pole array.
     """
     
 
@@ -24,7 +25,7 @@ class FromPole2Other(object):
           
         Notice:
              electrode series should from 1 to the amount of electrodes.
-             A(C1)---M(P1)---N(P2)---B(C2); AM = MN =NB
+             wenner_alpha configuration: A(C1)---M(P1)---N(P2)---B(C2); AM = MN =NB
         Args:
             data: at least include locations and normalized voltage in pd.DataFrame type.
             shift : eletrode offset from begin, no shift by default.
@@ -72,7 +73,7 @@ class FromPole2Other(object):
         Args:
             eletotal: total electrode number.
             unitspacing: BA = MN = unitspacing, awalys positive and integer.
-            shift : eletrode offset from begin, no shift by default.
+            shift : eletrode offset from zero, no shift by default.
             drop : list, omit specified electrode.
         
         Returns:

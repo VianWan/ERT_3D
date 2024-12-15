@@ -4,22 +4,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from IPython.display import display, clear_output
 from ipywidgets import interact
-
+from typing import List
 # __all__=['CLEAR_INDEX']
 class ProcessData():
 
     CLEAR_INDEX = None
 
     @classmethod
-    def pretreat_data(cls,observe_data,transmit) -> np.array:
-        """ we follow the basic truth that acquired voltage from the next potential electrode always smaller than forward one.
-        
-        Arg:
-        observe_data : the 'R0(ohm)' colums data(also normalized voltage), which is the crucial information for resistivity
-                  inversion using SimPEG opnesource python package
-        transmit : in partical, one transmit electrode correspond to more than one potential electrode. For same current electrode,
-               we group the corresponding receiving electrodes together and only need to give the position of the first receiving
-               electrode in all electrode arrangements, provided that the electrodes are arranged in an orderly manner. 
+    def pretreat_data(cls,data) -> np.array:
+        """ we follow the basic rule that acquired voltage from the next potential electrode always smaller than forward one.
+        Args:
+             input parameter is DataFrame type, which original file type should comply with the example file pattern. 
         
        Return : Returns the number of rows of unqualified acquisition data in the raw data.
         
@@ -27,6 +22,9 @@ class ProcessData():
         # global CLEAR_INDEX
         # Create an Output widget
         output = widgets.Output()
+        
+        data_inner, eletransmit = cls.fun_kit(data)
+        observe_data = data_inner
 
         # Sample data
         obs_upper = observe_data.max() + 1 * np.abs(observe_data.min())
@@ -55,6 +53,10 @@ class ProcessData():
 
     )  
         
+
+
+        
+
         def range_sub_fun(change,data_inner,eletransmit):
         
             # global CLEAR_INDEX
@@ -113,10 +115,9 @@ class ProcessData():
             
 
 
-        def drop_down_fun(change,data_inner,eletransmit):
+        def drop_down_fun(change,data_inner, eletransmit):
         
             # global CLEAR_INDEX
-
             x = np.arange(0, data_inner.size)
             lower, upper = range_slider.value
             iternum = change.new
@@ -171,8 +172,8 @@ class ProcessData():
                 
                 
         
-        range_slider.observe(lambda change: range_sub_fun(change, observe_data,transmit), names='value')
-        iters_drop_down.observe(lambda change: drop_down_fun(change, observe_data,transmit), names='value')
+        range_slider.observe(lambda change: range_sub_fun(change, observe_data,eletransmit), names='value')
+        iters_drop_down.observe(lambda change: drop_down_fun(change, observe_data,eletransmit), names='value')
         
         # Displa.y the widgets
         display(iters_drop_down,range_slider,output )
@@ -192,8 +193,33 @@ class ProcessData():
                     
                     if pre < curr:
                         un_point.append([index])
-        
 
         un_point = np.unique(un_point)
-        return un_point             
+        return un_point  
+        
+    @staticmethod
+    def fun_kit(data)->List[np.ndarray]:
+        """ we follow the basic truth that acquired voltage from the next potential electrode always smaller than forward one.
+        
+        Arg:
+            pandas.DataFrame, first Colums is Current pole(C1) and ending colums is observe data
+        
+        Return:
+            observe_data : inhere, the 'R0(ohm)' colums data(also normalized voltage), which is the crucial information for resistivity
+                    inversion using SimPEG opnesource python package
+            transmit : in partical, one transmit electrode correspond to more than one potential electrode. For same current electrode,
+                we group the corresponding receiving electrodes together and only need to give the position of the first receiving
+                electrode in all electrode arrangements, provided that the electrodes are arranged in an orderly manner. 
+            
+        """
+
+
+        observe_data = data.iloc[:,-1].values
+        C1 = data.iloc[:,0].values
+        C1_unique = np.unique(C1)
+        C1_shift = np.array([ np.where(C1 == index )[0][0] for index in C1_unique])
+
+
+        
+        return observe_data,C1_shift            
     

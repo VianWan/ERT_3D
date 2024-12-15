@@ -1,20 +1,22 @@
-from abc import ABC,abstractmethod,abstractproperty
+from abc import ABC,abstractmethod, abstractmethod
+
 
 class BaseMesh(ABC):
-    
-    @abstractproperty
+    @property
+    @abstractmethod
     def edges(self):
         pass
-
-    @abstractproperty
+    @property
+    @abstractmethod
     def cell_centers(self):
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def vol(self):
         pass
-    
-    @abstractproperty
+    @property
+    @abstractmethod
     def dim(self):
         pass
 

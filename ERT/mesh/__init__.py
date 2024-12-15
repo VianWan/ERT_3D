@@ -1,4 +1,1 @@
-from ERT.mesh.tensormesh import TensorMesh
-
-
- 
+from .tensormesh import TensorMesh 
